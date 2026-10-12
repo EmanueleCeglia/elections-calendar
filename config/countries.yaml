@@ -1,0 +1,186 @@
+# EU-27 member states and the constitutional facts the pipeline needs to
+# classify elections. This is static reference data about *institutions*,
+# not a list of elections: the elections themselves are always fetched.
+#
+#   wikidata          Wikidata item of the country (used to filter sources)
+#   wikidata_aliases  other items Wikidata uses as "country" of elections
+#   names             names/demonyms used in titles and free text
+#   indirect          election types that are decided by an assembly or
+#                     electoral college rather than by voters
+#   upper_house       names of the upper chamber, when it can be elected on
+#                     its own (partial renewals, indirect elections)
+#   concurrent_upper  true when the upper chamber is always elected together
+#                     with the lower one (so "Senate" never stands alone)
+#   not_elected       bodies whose members are delegated, not elected in a
+#                     distinct election (dropped when a source lists them)
+
+AT:
+  name: Austria
+  wikidata: Q40
+  names: [Austria, Austrian]
+  indirect: []
+  upper_house: []
+  not_elected: [Federal Council, Bundesrat]
+BE:
+  name: Belgium
+  wikidata: Q31
+  names: [Belgium, Belgian]
+  indirect: [upper_house]
+  upper_house: [Senate]
+BG:
+  name: Bulgaria
+  wikidata: Q219
+  names: [Bulgaria, Bulgarian]
+  indirect: []
+  upper_house: []
+HR:
+  name: Croatia
+  wikidata: Q224
+  names: [Croatia, Croatian]
+  indirect: []
+  upper_house: []
+CY:
+  name: Cyprus
+  wikidata: Q229
+  names: [Cyprus, Cypriot]
+  indirect: []
+  upper_house: []
+CZ:
+  name: Czech Republic
+  wikidata: Q213
+  names: [Czech Republic, Czechia, Czech]
+  indirect: []
+  upper_house: [Senate]
+DK:
+  name: Denmark
+  wikidata: Q35
+  wikidata_aliases: [Q756617]  # Danish Realm (Faroe/Greenland are excluded by territory)
+  names: [Denmark, Danish]
+  indirect: []
+  upper_house: []
+EE:
+  name: Estonia
+  wikidata: Q191
+  names: [Estonia, Estonian]
+  indirect: [presidential]
+  upper_house: []
+FI:
+  name: Finland
+  wikidata: Q33
+  names: [Finland, Finnish]
+  indirect: []
+  upper_house: []
+FR:
+  name: France
+  wikidata: Q142
+  names: [France, French]
+  indirect: [upper_house]
+  upper_house: [Senate, Sénat]
+DE:
+  name: Germany
+  wikidata: Q183
+  names: [Germany, German]
+  indirect: [presidential]
+  upper_house: []
+  not_elected: [Bundesrat]
+GR:
+  name: Greece
+  wikidata: Q41
+  names: [Greece, Greek, Hellenic]
+  indirect: [presidential]
+  upper_house: []
+HU:
+  name: Hungary
+  wikidata: Q28
+  names: [Hungary, Hungarian]
+  indirect: [presidential]
+  upper_house: []
+IE:
+  name: Ireland
+  wikidata: Q27
+  names: [Ireland, Republic of Ireland, Irish]
+  indirect: [upper_house]
+  upper_house: [Seanad, Senate]
+IT:
+  name: Italy
+  wikidata: Q38
+  names: [Italy, Italian]
+  indirect: [presidential]
+  upper_house: [Senate]
+  concurrent_upper: true
+LV:
+  name: Latvia
+  wikidata: Q211
+  names: [Latvia, Latvian]
+  indirect: [presidential]
+  upper_house: []
+LT:
+  name: Lithuania
+  wikidata: Q37
+  names: [Lithuania, Lithuanian]
+  indirect: []
+  upper_house: []
+LU:
+  name: Luxembourg
+  wikidata: Q32
+  names: [Luxembourg, Luxembourgish]
+  indirect: []
+  upper_house: []
+MT:
+  name: Malta
+  wikidata: Q233
+  names: [Malta, Maltese]
+  indirect: [presidential]
+  upper_house: []
+NL:
+  name: Netherlands
+  wikidata: Q55
+  wikidata_aliases: [Q29999]  # Kingdom of the Netherlands
+  names: [Netherlands, the Netherlands, Dutch]
+  indirect: [upper_house]
+  upper_house: [Senate, Eerste Kamer]
+PL:
+  name: Poland
+  wikidata: Q36
+  names: [Poland, Polish]
+  indirect: []
+  upper_house: [Senate]
+  concurrent_upper: true
+PT:
+  name: Portugal
+  wikidata: Q45
+  names: [Portugal, Portuguese]
+  indirect: []
+  upper_house: []
+RO:
+  name: Romania
+  wikidata: Q218
+  names: [Romania, Romanian]
+  indirect: []
+  upper_house: [Senate]
+  concurrent_upper: true
+SK:
+  name: Slovakia
+  wikidata: Q214
+  names: [Slovakia, Slovak]
+  indirect: []
+  upper_house: []
+SI:
+  name: Slovenia
+  wikidata: Q215
+  names: [Slovenia, Slovenian, Slovene]
+  indirect: [upper_house]
+  upper_house: [National Council]
+ES:
+  name: Spain
+  wikidata: Q29
+  names: [Spain, Spanish]
+  indirect: []
+  upper_house: [Senate]
+  concurrent_upper: true
+SE:
+  name: Sweden
+  wikidata: Q34
+  names: [Sweden, Swedish]
+  indirect: []
+  upper_house: []

@@ -1,0 +1,80 @@
+# Pipeline settings. Paths are relative to the repository root.
+
+window:
+  # Each run covers [run date, 31 December of the year `years_ahead` after
+  # the run date]. 1 = "from today until the end of next year".
+  years_ahead: 1
+  # An upcoming election that no source has reported for this many days is
+  # marked "unconfirmed" and moved to the "Needs review" sheet.
+  stale_after_days: 21
+
+scope:
+  levels: [national, regional]
+  include_indirect: true        # head of state / upper house chosen by an assembly
+  include_referendums: false
+  include_by_elections: false
+  include_local: false
+
+output:
+  dir: output
+  calendar_csv: elections_calendar.csv   # state of the calendar (read back on the next run)
+  calendar_xlsx: elections_calendar.xlsx
+  changes_csv: changes.csv               # append-only log of what each run changed
+  review_csv: review_candidates.csv      # weakly supported candidates, not in the calendar
+
+sources:
+  wikipedia:
+    enabled: true
+    # "{year}" is replaced by every year the window touches.
+    pages:
+      - "{year} national electoral calendar"
+      - "{year} local electoral calendar"
+      - "{year} elections in the European Union"
+  wikidata:
+    enabled: true
+  cor_pdf:
+    # EU Committee of the Regions "EU-27 Election Calendar" (updated in place).
+    enabled: true
+    urls:
+      - "https://www.cor.europa.eu/sites/default/files/2026-05/Elections%20Calendar%202024-2029%20UPDATE%20END%20MAY%202026.pdf"
+    warn_if_older_than_days: 90
+  manual:
+    enabled: true
+    path: data/manual_events.csv
+  llm:
+    # "auto" runs the adapter only when OPENAI_API_KEY is set.
+    enabled: auto
+    # gpt-6-sol: 97% recall on the 2026-27 ground truth vs 80% for gpt-6-luna
+    # at similar token use (see README). Override with ELECTIONS_LLM_MODEL.
+    model: gpt-6-sol
+    reasoning_effort: low
+    search_context_size: medium
+    max_parallel_requests: 4
+
+# Higher wins when sources disagree on an exact date.
+source_priority:
+  manual: 100
+  cor_pdf: 80
+  wikipedia: 70
+  llm: 60
+  wikidata: 50
+
+# Parts of member states that are outside the EU (overseas countries and
+# territories, Faroe Islands, Greenland). Elections there are skipped.
+excluded_territories:
+  - Greenland
+  - Faroe Islands
+  - New Caledonia
+  - French Polynesia
+  - Wallis and Futuna
+  - Saint Barthélemy
+  - Saint-Barthélemy
+  - Saint Pierre and Miquelon
+  - Saint-Pierre-et-Miquelon
+  - French Southern and Antarctic Lands
+  - Aruba
+  - Curaçao
+  - Sint Maarten
+  - Northern Cyprus
+  - Northern Cypriot
+  - Turkish Republic of Northern Cyprus

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "elections-calendar"
+version = "0.1.0"
+description = "Calendar of national and regional elections in the EU-27, rebuilt from public sources on every run."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31",
+    "PyYAML>=6.0",
+    "openpyxl>=3.1",
+    "pdfplumber>=0.11",
+]
+
+[project.optional-dependencies]
+llm = ["openai>=2.0"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+elections-calendar = "elections_calendar.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,0 +1,42 @@
+== National elections ==
+=== Parliamentary elections ===
+{| class="wikitable" style="text-align:center;"
+!Member state
+!Election
+!Parliament before
+! colspan="2" |Party
+|-
+|[[Estonia]]
+|[[Next Estonian parliamentary election|By 7 March]]
+|[[File:Riigikogu composition.svg|frameless|100x100px]]
+|{{Party name with color| Estonian Reform Party}}
+|-
+|[[Greece]]
+|[[Next Greek parliamentary election|By 25 July]]
+|[[File:Current Greece Parliament.svg|frameless|100x100px]]
+|{{Party name with color| New Democracy (Greece)}}
+|}
+
+=== Presidential elections in parliamentary states ===
+{| class="wikitable" style="text-align:center;"
+!Member state
+!Election
+!President before
+|-
+|[[Latvia]]
+|By May
+|[[Edgars Rinkēvičs]]
+|}
+
+== Local elections ==
+=== Finland ===
+* [[2027 Ålandic legislative election]], by October
+
+=== Netherlands ===
+* [[2027 Dutch provincial elections]], 17 March, also [[2027 Dutch Senate election|indirectly determining the composition of the Senate]].
+
+=== Spain ===
+* [[2027 Spanish regional elections]], 23 May
+** [[2027 Asturian regional election]]
+** [[Next Balearic regional election|2027 Balearic regional election]]
+* [[2027 Spanish local elections]], 23 May
