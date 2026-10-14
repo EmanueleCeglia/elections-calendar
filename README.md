@@ -61,7 +61,7 @@ Main columns:
 | Source | What it contributes |
 |---|---|
 | **Wikipedia** – "YYYY national electoral calendar", "YYYY local electoral calendar", "YYYY elections in the European Union" (for every year in the window) | Dates as currently known, including "by…" deadlines and "unknown date" sections. Each linked election article is resolved to its Wikidata item to get the country, region and kind of election. All pages are fetched in a single request. |
-| **Wikidata** – SPARQL search for election items of the EU-27 dated within the window, plus every item found through Wikipedia | Dates with their precision (day/month/year). Month-end dates such as "30 June 2027" are usually legal deadlines or placeholders, so they are treated as weak evidence. Wikidata also supplies the first-level subdivisions of each country (P150) in many languages, so that "Tirol", "Tyrol" and "Tyrolean" resolve to the same region. |
+| **Wikidata** – SPARQL search for election items dated within the window, one query per member state, plus every item found through Wikipedia | Dates with their precision (day/month/year). One small query per country stays well under the query service's 60-second limit, and a timeout loses only that country; after three failures in a row the search stops and the items found through Wikipedia are used. Month-end dates such as "30 June 2027" are usually legal deadlines or placeholders, so they are treated as weak evidence. Wikidata also supplies the first-level subdivisions of each country (P150) in many languages, so that "Tirol", "Tyrol" and "Tyrolean" resolve to the same region. |
 | **EU Committee of the Regions – "EU-27 Election Calendar" PDF** | A table of national and regional elections, each marked *Confirmed* or *Expected*. The file is updated in place; its URL is in `config/settings.yaml`, and the run warns when the file has not been updated for more than 90 days. |
 | **OpenAI research** (optional, `OPENAI_API_KEY`) | One request per member state using the Responses API with web search and a strict JSON schema. It catches what the structured sources miss (elections called last week, regions without a Wikipedia article yet) and confirms dates against official sources. Its findings are capped at *medium* confidence. |
 | **Manual** – `data/manual_events.csv` | Your own additions or corrections. They have the highest priority. |
@@ -167,7 +167,8 @@ and about 60 web searches.
   time. Dates the LLM marks as `estimate` therefore never narrow other
   sources, and changes in its answers are logged as `revised`.
 * Wikimedia rate-limits shared IP addresses heavily. The pipeline retries
-  with back-off, so a run takes about 5–10 minutes.
+  with back-off, and the per-country Wikidata search adds a few minutes,
+  so a run takes about 10–20 minutes.
 * The CoR PDF has no stable landing page. If its URL changes, update
   `sources.cor_pdf.urls`; the run warns when the file has not been updated
   for more than 90 days.

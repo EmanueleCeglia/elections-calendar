@@ -1,8 +1,10 @@
 """Wikidata: election items of EU member states with a date in the window.
 
-Besides the SPARQL search, every election item already resolved by the
-Wikipedia source contributes its Wikidata date, so Wikidata dates are used
-even when the (heavily loaded) query service times out.
+The SPARQL search runs one query per country: small queries finish well
+within the query service's time limit, and a timeout costs one country
+instead of all 27. Besides the search, every election item already resolved
+by the Wikipedia source contributes its Wikidata date, so Wikidata dates are
+used even when the (heavily loaded) query service is unavailable.
 """
 
 from __future__ import annotations
@@ -24,22 +26,19 @@ def as_deadline(p: Period) -> Period:
     return Period(p.start.replace(month=1, day=1), p.start, "deadline", f"by {p.start:%-d %B %Y} (Wikidata)")
 
 
+# Retries per country query (the default client allows more), and how many
+# countries may fail in a row before the service is considered down.
+RETRIES_PER_COUNTRY = 2
+MAX_CONSECUTIVE_FAILURES = 3
+
+
 class WikidataSource(Source):
     name = "wikidata"
 
     def fetch(self) -> list[Candidate]:
-        window = self.ctx.window
-        countries = [c.wikidata for c in self.config.countries.values()]
-        try:
-            # Look back a few weeks so a first round just before the window
-            # still brings its run-off along.
-            qids = self.ctx.wikidata.dated_elections(countries, window.start - timedelta(days=45), window.end)
-            self.log.info("SPARQL returned %d election items", len(qids))
-        except Exception as exc:
-            if not self.ctx.resolver.resolved:
-                raise
-            self.log.warning("SPARQL search failed (%s); using items found via Wikipedia only", exc)
-            qids = []
+        qids, failed = self.search()
+        if failed and not qids and not self.ctx.resolver.resolved:
+            raise RuntimeError(f"SPARQL search failed for every country tried: {', '.join(failed)}")
         self.ctx.resolver.resolve(qids)
         out = []
         for election in self.ctx.resolver.resolved.values():
@@ -47,6 +46,48 @@ class WikidataSource(Source):
             if cand:
                 out.append(cand)
         return out
+
+    def search(self) -> tuple[list[str], list[str]]:
+        """Run the SPARQL search country by country.
+
+        Returns the election items found and the codes of the countries whose
+        query failed or was skipped.
+        """
+        window = self.ctx.window
+        # Look back a few weeks so a first round just before the window still
+        # brings its run-off along.
+        start = window.start - timedelta(days=45)
+        countries = list(self.config.countries.values())
+        found: list[str] = []
+        failed: list[str] = []
+        consecutive = 0
+        for i, country in enumerate(countries):
+            try:
+                qids = self.ctx.wikidata.dated_elections(
+                    [country.wikidata, *country.wikidata_aliases], start, window.end,
+                    retries=RETRIES_PER_COUNTRY,
+                )
+            except Exception as exc:
+                failed.append(country.code)
+                consecutive += 1
+                self.log.warning("SPARQL search for %s failed: %s", country.name, exc)
+                if consecutive >= MAX_CONSECUTIVE_FAILURES:
+                    skipped = [c.code for c in countries[i + 1:]]
+                    failed += skipped
+                    self.log.warning(
+                        "query service looks unavailable (%d failures in a row); skipping %s and "
+                        "using the items found via Wikipedia for them", consecutive, ", ".join(skipped) or "nothing",
+                    )
+                    break
+                continue
+            consecutive = 0
+            found += qids
+        found = list(dict.fromkeys(found))
+        self.log.info(
+            "SPARQL: %d election items from %d/%d countries%s", len(found), len(countries) - len(failed),
+            len(countries), f" (failed or skipped: {', '.join(failed)})" if failed else "",
+        )
+        return found, failed
 
     def candidate(self, election: ResolvedElection) -> Candidate | None:
         window = self.ctx.window

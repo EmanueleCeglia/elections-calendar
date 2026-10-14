@@ -85,12 +85,14 @@ class HttpClient:
         headers: dict | None = None,
         min_interval: float = 1.0,
         timeout: float | None = None,
+        retries: int | None = None,
     ) -> bytes:
         cache_path = self._cache_path(method, url, params, data)
         cached = self._read_cache(cache_path)
         if cached is not None:
             return cached
 
+        max_retries = self.max_retries if retries is None else retries
         attempt = 0
         while True:
             attempt += 1
@@ -101,7 +103,7 @@ class HttpClient:
                     timeout=timeout or self.timeout,
                 )
             except requests.RequestException as exc:
-                if attempt > self.max_retries:
+                if attempt > max_retries:
                     raise
                 wait = min(2**attempt, self.max_wait)
                 log.warning("%s failed (%s); retrying in %.0fs", url, exc, wait)
@@ -109,7 +111,7 @@ class HttpClient:
                 continue
 
             if resp.status_code == 429 or resp.status_code >= 500:
-                if attempt > self.max_retries:
+                if attempt > max_retries:
                     resp.raise_for_status()
                 retry_after = resp.headers.get("Retry-After", "")
                 wait = float(retry_after) if retry_after.isdigit() else 2**attempt * 2

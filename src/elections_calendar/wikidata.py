@@ -203,13 +203,14 @@ class Wikidata:
         return {q: self._entities[q] for q in qids if q in self._entities}
 
     # -------------------------------------------------------------- SPARQL
-    def sparql(self, query: str) -> list[dict]:
+    def sparql(self, query: str, retries: int | None = None) -> list[dict]:
         data = self.http.get_json(
             SPARQL_ENDPOINT,
             params={"query": query, "format": "json"},
             headers={"Accept": "application/sparql-results+json"},
             min_interval=2,
             timeout=150,
+            retries=retries,
         )
         return [
             {k: v.get("value", "") for k, v in row.items()} for row in data["results"]["bindings"]
@@ -224,8 +225,15 @@ class Wikidata:
             out.setdefault(row["country"].rsplit("/", 1)[-1], []).append(row["sub"].rsplit("/", 1)[-1])
         return out
 
-    def dated_elections(self, country_qids: Iterable[str], start: date, end: date) -> list[str]:
-        """Election items in the given countries dated inside [start, end].
+    def dated_elections(
+        self, country_qids: Iterable[str], start: date, end: date, retries: int | None = None
+    ) -> list[str]:
+        """Election items of ONE country dated inside [start, end].
+
+        ``country_qids`` are the items standing for that country (its main
+        item plus aliases such as "Kingdom of the Netherlands"). Callers query
+        country by country: one query for all 27 countries regularly exceeds
+        the query service's 60-second limit.
 
         Year-precision dates are stored as 1 January, so "<start year>-01-01"
         is matched too. The query returns each item's jurisdiction and the
@@ -234,10 +242,11 @@ class Wikidata:
         of follow-up entity requests small. (Doing this filter inside SPARQL
         makes the query time out.)
         """
-        values = " ".join(f"wd:{q}" for q in country_qids)
+        group = set(country_qids)
+        values = " ".join(f"wd:{q}" for q in sorted(group))
         year_start = date(start.year, 1, 1)
         query = f"""
-SELECT ?e ?country ?jur ?jurParent WHERE {{
+SELECT ?e ?jur ?jurParent WHERE {{
   VALUES ?country {{ {values} }}
   ?e wdt:P17 ?country ; wdt:P31 ?class .
   ?class wdt:P279* wd:{ELECTION_CLASS} .
@@ -247,17 +256,19 @@ SELECT ?e ?country ?jur ?jurParent WHERE {{
           ?date = "{year_start.isoformat()}T00:00:00Z"^^xsd:dateTime))
   OPTIONAL {{ ?e wdt:P1001 ?jur . OPTIONAL {{ ?jur wdt:P131 ?jurParent . }} }}
 }}"""
-        items: dict[str, dict[str, set[str] | str]] = {}
-        for row in self.sparql(query):
+        items: dict[str, dict[str, set[str]]] = {}
+        for row in self.sparql(query, retries=retries):
             qid = row["e"].rsplit("/", 1)[-1]
-            item = items.setdefault(qid, {"country": row["country"].rsplit("/", 1)[-1], "jur": set(), "parents": set()})
+            item = items.setdefault(qid, {"jur": set(), "parents": set()})
             if row.get("jur"):
                 item["jur"].add(row["jur"].rsplit("/", 1)[-1])
             if row.get("jurParent"):
                 item["parents"].add(row["jurParent"].rsplit("/", 1)[-1])
+        # Keep national items (no jurisdiction, or the country itself) and
+        # first-level regions (their parent is the country); drop the rest.
         return [
             qid for qid, it in items.items()
-            if not it["jur"] or it["country"] in it["jur"] or it["country"] in it["parents"] or not it["parents"]
+            if not it["jur"] or it["jur"] & group or it["parents"] & group or not it["parents"]
         ]
 
 
