@@ -38,3 +38,6 @@ run_date,event_id,change,field,old,new,description
 2026-10-12,AT-REG-upper-austria-2027,added,date,,2027 [2027-01-01..2027-12-31],New: 2027 Upper Austrian state election (Austria)
 2026-10-12,AT-REG-tyrol-2027,added,date,,2027 [2027-01-01..2027-12-31],New: 2027 Tyrolean state election (Austria)
 2026-10-12,IT-REG-sicily-2027,added,date,,2027 [2027-01-01..2027-12-31],New: 2027 Sicilian regional election (Italy)
+2026-10-19,ES-REG-aragon-2027,added,date,,2027-05-23,"New: Spain, Aragon: Autonomous community elections (Spain)"
+2026-10-19,ES-REG-extremadura-2027,added,date,,2027-05-23,"New: Spain, Extremadura: Autonomous community elections (Spain)"
+2026-10-19,CZ-NAT-upper-house-2026,held,status,confirmed,held,Took place: 2026 Czech Senate election
