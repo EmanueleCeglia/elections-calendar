@@ -42,3 +42,4 @@ run_date,event_id,change,field,old,new,description
 2026-10-19,ES-REG-extremadura-2027,added,date,,2027-05-23,"New: Spain, Extremadura: Autonomous community elections (Spain)"
 2026-10-19,CZ-NAT-upper-house-2026,held,status,confirmed,held,Took place: 2026 Czech Senate election
 2026-10-26,SK-REG-all-2026,held,status,confirmed,held,Took place: 2026 Slovak regional elections
+2026-11-02,BG-NAT-presidential-2026,held,status,confirmed,held,Took place: 2026 Bulgarian presidential election
