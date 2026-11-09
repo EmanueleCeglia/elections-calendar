@@ -43,3 +43,7 @@ run_date,event_id,change,field,old,new,description
 2026-10-19,CZ-NAT-upper-house-2026,held,status,confirmed,held,Took place: 2026 Czech Senate election
 2026-10-26,SK-REG-all-2026,held,status,confirmed,held,Took place: 2026 Slovak regional elections
 2026-11-02,BG-NAT-presidential-2026,held,status,confirmed,held,Took place: 2026 Bulgarian presidential election
+2026-11-09,FR-REG-saint-martin-2027,unconfirmed,status,expected,unconfirmed,Not reported by any source since 2026-10-12: 2027 Saint Martin territorial council election
+2026-11-09,ES-REG-ceuta-2027,unconfirmed,status,expected,unconfirmed,Not reported by any source since 2026-10-12: 2027 Ceuta Assembly election
+2026-11-09,ES-REG-melilla-2027,unconfirmed,status,expected,unconfirmed,Not reported by any source since 2026-10-12: 2027 Melilla Assembly election
+2026-11-09,SI-NAT-upper-house-2027,unconfirmed,status,estimated,unconfirmed,Not reported by any source since 2026-10-12: 2027 Slovenian National Council election
